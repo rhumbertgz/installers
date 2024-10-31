@@ -1,5 +1,13 @@
 #!/bin/bash
 
+cleanup() {
+    if [ -d "$DOWNLOADS_PATH" ]; then
+    rm -r "$DOWNLOADS_PATH"
+    fi
+}
+
+trap cleanup EXIT
+
 if [ -z "$1" ]; then
     echo "Error: USER_TOKEN was not provided."
     exit 1
@@ -51,7 +59,7 @@ fi
 
 DOWNLOADS_PATH="./mlaas-downloads"
 if [ -d "$DOWNLOADS_PATH" ]; then
-    rm -rf "$DOWNLOADS_PATH"/*
+    rm -r "$DOWNLOADS_PATH"
 else
     mkdir -p "$DOWNLOADS_PATH"
 fi
@@ -61,7 +69,6 @@ PACKAGE_URL="https://gitlabe2.ext.net.nokia.com/api/v4/projects/96502/packages/g
 echo "Downloading package: $PACKAGE_URL"
 
 OUTPUT_PATH="${DOWNLOADS_PATH}/mlaas_cli-${PACKAGE_VERSION}.tar.gz"
-echo "OUTPUT_PATH package: $OUTPUT_PATH"
 curl --header "PRIVATE-TOKEN: ${USER_TOKEN}" --output $OUTPUT_PATH $PACKAGE_URL
 
 echo "Installing package: $PACKAGE_URL"
@@ -71,5 +78,3 @@ echo
 echo "MLaaS CLI installed successfully."
 echo
 echo "`mlaas --help`"
-
-rm -rf "$DOWNLOADS_PATH"/*
