@@ -1,9 +1,11 @@
 #!/bin/bash
 
-if [ -z "$USER_TOKEN" ]; then
+if [ -z "$1" ]; then
     echo "Error: USER_TOKEN was not provided."
     exit 1
 fi
+
+USER_TOKEN=$1
 
 # Check if Python 3.9 or newer is installed
 PYTHON_VERSION=$(python3 --version 2>&1)
@@ -28,7 +30,7 @@ if ! command -v pipx &> /dev/null; then
     echo "pipx installed successfully."
 fi
 
-PACKAGE_VERSION=${PACKAGE_VERSION:-1.0.0}
+PACKAGE_VERSION=${$2:-1.0.0}
 TOOL_NAME="mlaas-cli"
 
 # Check if the mlaas-cli is installed
