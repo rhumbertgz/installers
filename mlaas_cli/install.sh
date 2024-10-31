@@ -30,7 +30,8 @@ if ! command -v pipx &> /dev/null; then
     echo "pipx installed successfully."
 fi
 
-PACKAGE_VERSION=${$2:-1.0.0}
+# Set default value for PACKAGE_VERSION if not provided
+PACKAGE_VERSION=${2:-1.0.0}
 TOOL_NAME="mlaas-cli"
 
 # Check if the mlaas-cli is installed
@@ -41,8 +42,6 @@ if pipx list | grep -q "$TOOL_NAME"; then
         echo "The v$PACKAGE_VERSION of the MLaaS CLI is already installed."
         echo
         echo "`mlaas --help`"
-        # Delete the script
-        rm -- "$0"
         exit 0
     fi
     echo "Uninstalling mlaas_cli=$CURRENT_VERSION..."
