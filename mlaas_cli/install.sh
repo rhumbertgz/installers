@@ -50,7 +50,7 @@ if pipx list | grep -q "$TOOL_NAME"; then
 fi
 
 
-DOWNLOADS_PATH="./downloads"
+DOWNLOADS_PATH="./mlaas-downloads"
 if [ -d "$DOWNLOADS_PATH" ]; then
     rm -rf "$DOWNLOADS_PATH"/*
 else
@@ -73,5 +73,4 @@ echo "MLaaS CLI installed successfully."
 echo
 echo "`mlaas --help`"
 
-# Delete the script
-rm -- "$0"
+rm -rf "$DOWNLOADS_PATH"/*
