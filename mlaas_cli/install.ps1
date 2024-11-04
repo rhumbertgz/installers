@@ -20,6 +20,11 @@ function Log-Error {
     Write-Host "[error] $Message" -ForegroundColor Red
 }
 
+function Log-Warn {
+    param($Message)
+    Write-Host "[warn] $Message" -ForegroundColor Yellow
+}
+
 function Verify-ScoopInstallation{
     if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) {
         Log-Info "Scoop is not installed. Installing Scoop..."
@@ -173,6 +178,14 @@ function Unblock-Cli {
         if (Test-Path -Path "$MLAAS_PATH:Zone.Identifier") {
             Remove-Item -Path "$MLAAS_PATH:Zone.Identifier"
             Log-Info "MLaaS CLI unblocked successfully."
+        } 
+
+        # Get the current PATH environment variable
+        $CURRENT_PATH = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine)
+
+        # Check if the BINARY_PATH is already in the PATH variable
+        if ($CURRENT_PATH -notlike "*$BINARY_PATH*") {
+            Log-Warn "The binary path: `$BINARY_PATH` is not part of global PATH environment variable."
         } 
 
         Log-Info "The CLI is installed at: $MLAAS_PATH"    
