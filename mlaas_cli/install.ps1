@@ -134,7 +134,7 @@ function Install-Tool {
     $OUTPUT_PATH = "${DOWNLOADS_PATH}/mlaas_cli-${PACKAGE_VERSION}.tar.gz"
     try {
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-        Invoke-RestMethod -Uri $PACKAGE_URL -Headers @{ "PRIVATE-TOKEN" = $USER_TOKEN } -OutFile $OUTPUT_PATH -MaximumRedirection 10 -UseBasicParsing -Verbose
+        Invoke-RestMethod -Uri $PACKAGE_URL -Headers @{ "PRIVATE-TOKEN" = $USER_TOKEN } -OutFile $OUTPUT_PATH -MaximumRedirection 10 -UseBasicParsing
         Unblock-File -Path $OUTPUT_PATH
     } catch {
         Log-Error "Failed to download file: $_"
