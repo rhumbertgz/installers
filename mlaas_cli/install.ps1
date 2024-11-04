@@ -179,9 +179,9 @@ function Unblock-Cli {
         $CURRENT_PATH = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine)
 
         # Check if the path is already in the PATH variable
-        if ($CURRENT_PATH -notlike "*$MLAAS_PATH*") {
+        if ($CURRENT_PATH -notlike "*$BINARY_PATH*") {
             # Add the new path to the PATH variable
-            $NEW_PATH = "$CURRENT_PATH;$MLAAS_PATH"
+            $NEW_PATH = "$CURRENT_PATH;$BINARY_PATH"
             [System.Environment]::SetEnvironmentVariable("Path", $NEW_PATH, [System.EnvironmentVariableTarget]::Machine)
             if ($?){
                 Log-Info "CLI path added to PATH environment variable."
