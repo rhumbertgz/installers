@@ -157,6 +157,7 @@ function Install-Tool {
 }
 
 #########################################################################################
+Log-Info "Environment Variable USER_TOKEN: $env:USER_TOKEN"
 if ($env:USER_TOKEN) {
     Log-Error "USER_TOKEN was not provided."
     exit 1
