@@ -182,8 +182,11 @@ function Install-Tool {
 Verify-PythonInstallation
 Verify-PipxInstallation
 
+Log-Info "Args: $args"
 $USER_TOKEN = Get-UserToken $args
+Log-Info "User token: $USER_TOKEN"
 $PACKAGE_VERSION = Get-PackageVersion $args
+Log-Info "Package version: $PACKAGE_VERSION"
 $TOOL_NAME = "mlaas-cli"
 
 if (-not (Get-Command mlaas -ErrorAction SilentlyContinue)) {
