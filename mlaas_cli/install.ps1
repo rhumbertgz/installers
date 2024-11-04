@@ -220,8 +220,9 @@ if (-not (Get-Command mlaas -ErrorAction SilentlyContinue)) {
     Log-Info "MLaaS CLI not installed. Installing CLI v$PACKAGE_VERSION ..."
     Install-Tool
 } else {
-    $MLAAS_VERSION = & mlaas --version
-    if ($PACKAGE_VERSION -eq $MLAAS_VERSION -replace 'mlaas, version ', '') {
+    $OUTPUT = & mlaas --version
+    $MLAAS_VERSION = $OUTPUT -replace 'mlaas, version ', ''
+    if ($PACKAGE_VERSION -eq MLAAS_VERSION) {
         Log-Info "The v$PACKAGE_VERSION of the MLaaS CLI is already installed."
         Show-MlaasHelp
     } else {
