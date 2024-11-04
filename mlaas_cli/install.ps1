@@ -159,7 +159,7 @@ function Install-Tool {
 #########################################################################################
 Log-Info "Environment Variable USER_TOKEN: $env:USER_TOKEN"
 if ([string]::IsNullOrEmpty($env:USER_TOKEN)) {
-    Log-Error "env:USER_TOKEN was not provided."
+    Log-Error "env:USER_TOKEN was not found."
     exit 1
 }
 
