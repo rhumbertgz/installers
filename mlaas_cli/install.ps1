@@ -178,6 +178,7 @@ function Install-Tool {
 }
 
 #########################################################################################
+Write-Output "Environment Variable MY_VARIABLE: $env:MY_VARIABLE"
 Log-Info "Args: $args"
 $USER_TOKEN = Get-UserToken $args
 Log-Info "User token: $USER_TOKEN"
