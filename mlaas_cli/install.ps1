@@ -222,7 +222,7 @@ if (-not (Get-Command mlaas -ErrorAction SilentlyContinue)) {
 } else {
     $OUTPUT = & mlaas --version
     $MLAAS_VERSION = $OUTPUT -replace 'mlaas, version ', ''
-    if ($PACKAGE_VERSION -eq MLAAS_VERSION) {
+    if ($PACKAGE_VERSION -eq $MLAAS_VERSION) {
         Log-Info "The v$PACKAGE_VERSION of the MLaaS CLI is already installed."
         Show-MlaasHelp
     } else {
