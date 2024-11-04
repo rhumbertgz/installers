@@ -114,27 +114,6 @@ function Verify-PythonInstallation {
     }
 }
 
-function Get-UserToken {
-    param ([string[]]$ScriptArgs )
-
-    if ($ScriptArgs.Count -eq 0) {
-        Log-Error "USER_TOKEN was not provided."
-        exit 1
-    }
-
-    return $ScriptArgs[0]
-}
-
-function Get-PackageVersion {
-    param ([string[]]$ScriptArgs)
-
-    if ($ScriptArgs.Count -ge 2) {
-        return $ScriptArgs[1]
-    } else { 
-        return "1.0.0" 
-    }
-}
-
 function Show-MlaasHelp {
     Write-Host
     & mlaas --help
@@ -178,11 +157,19 @@ function Install-Tool {
 }
 
 #########################################################################################
-Log-Info "Environment Variable MY_VARIABLE: $env:MY_VARIABLE"
-Log-Info "Args: $args"
-$USER_TOKEN = Get-UserToken $args
+if ($env:USER_TOKEN) {
+    Log-Error "USER_TOKEN was not provided."
+    exit 1
+}
+
+if ($env:PACKAGE_VERSION) {
+    $PACKAGE_VERSION = "1.0.0" 
+} else {
+    $PACKAGE_VERSION = $env:PACKAGE_VERSION
+}
+
+$USER_TOKEN = $env:USER_TOKEN
 Log-Info "User token: $USER_TOKEN"
-$PACKAGE_VERSION = Get-PackageVersion $args
 Log-Info "Package version: $PACKAGE_VERSION"
 $TOOL_NAME = "mlaas-cli"
 
