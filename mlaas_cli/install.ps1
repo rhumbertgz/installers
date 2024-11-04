@@ -178,16 +178,16 @@ function Install-Tool {
 }
 
 #########################################################################################
-
-Verify-PythonInstallation
-Verify-PipxInstallation
-
 Log-Info "Args: $args"
 $USER_TOKEN = Get-UserToken $args
 Log-Info "User token: $USER_TOKEN"
 $PACKAGE_VERSION = Get-PackageVersion $args
 Log-Info "Package version: $PACKAGE_VERSION"
 $TOOL_NAME = "mlaas-cli"
+
+# Verify Python and Pipx are installed
+Verify-PythonInstallation
+Verify-PipxInstallation
 
 if (-not (Get-Command mlaas -ErrorAction SilentlyContinue)) {
     Log-Info "MLaaS CLI not installed. Installing CLI v$PACKAGE_VERSION ..."
