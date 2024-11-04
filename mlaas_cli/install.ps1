@@ -170,6 +170,12 @@ if ($env:PACKAGE_VERSION) {
 $USER_TOKEN = $env:USER_TOKEN
 $TOOL_NAME = "mlaas-cli"
 
+$proxyServer = "http://135.245.192.7:8000"
+
+# Set the proxy for the current session
+$Env:http_proxy = $proxyServer
+$Env:https_proxy = $proxyServer
+
 # Verify Python and Pipx are installed
 Verify-PythonInstallation
 Verify-PipxInstallation
