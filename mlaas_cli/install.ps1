@@ -1,6 +1,6 @@
+$DOWNLOADS_PATH = "mlaas-downloads"
 
 function Cleanup {
-    $DOWNLOADS_PATH = "mlaas-downloads"
     if (Test-Path -Path $DOWNLOADS_PATH) {
         Remove-Item -Path $DOWNLOADS_PATH -Recurse -Force
     }
@@ -119,9 +119,7 @@ function Show-MlaasHelp {
     & mlaas --help
 }
 
-function Install-Tool { 
-    Log-Info "Install-Tool / user token $USER_TOKEN"
-    $DOWNLOADS_PATH = "mlaas-downloads"   
+function Install-Tool {        
     if (Test-Path -Path $DOWNLOADS_PATH) {
         Remove-Item -Path $DOWNLOADS_PATH -Recurse -Force
     } else {
