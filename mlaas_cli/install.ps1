@@ -157,7 +157,6 @@ function Install-Tool {
 }
 
 #########################################################################################
-Log-Info "Environment Variable USER_TOKEN: $env:USER_TOKEN"
 if ([string]::IsNullOrEmpty($env:USER_TOKEN)) {
     Log-Error "env:USER_TOKEN was not found."
     exit 1
@@ -169,8 +168,6 @@ if ($env:PACKAGE_VERSION) {
 }
 
 $USER_TOKEN = $env:USER_TOKEN
-Log-Info "User token: $USER_TOKEN"
-Log-Info "Package version: $PACKAGE_VERSION"
 $TOOL_NAME = "mlaas-cli"
 
 # Verify Python and Pipx are installed
