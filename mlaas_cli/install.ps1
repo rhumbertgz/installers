@@ -143,7 +143,7 @@ function Install-Tool {
 
     Log-Info "Installing MLaaS CLI v$PACKAGE_VERSION ..."
     
-    & pipx install $OUTPUT_PATH
+    & pipx install $OUTPUT_PATH --pip-args="--default-timeout=1000"
     #& pipx install $TOOL_NAME --index-url=https://_token_:$USER_TOKEN@gitlabe2.ext.net.nokia.com/api/v4/projects/96468/packages/pypi/simple
 
     if ($?) {
