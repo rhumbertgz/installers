@@ -221,7 +221,7 @@ if (-not (Get-Command mlaas -ErrorAction SilentlyContinue)) {
     Install-Tool
 } else {
     $MLAAS_VERSION = & mlaas --version
-    if ($PACKAGE_VERSION -eq $MLAAS_VERSION $VERSION -replace 'mlaas, version ', '') {
+    if ($PACKAGE_VERSION -eq $MLAAS_VERSION -replace 'mlaas, version ', '') {
         Log-Info "The v$PACKAGE_VERSION of the MLaaS CLI is already installed."
         Show-MlaasHelp
     } else {
