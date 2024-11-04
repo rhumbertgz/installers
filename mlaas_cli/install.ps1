@@ -43,7 +43,7 @@ function Verify-GitInstallation {
     if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
         Log-Info "Git is not installed. Installing Git..."
         & scoop install git
-       if ($?) {
+        if ($?) {
             Log-Info "Git installed successfully."
         } else {
             Log-Error "Git could not be installed but it is needed by Scoop. See log messages for more info."
@@ -175,6 +175,19 @@ function Unblock-Cli {
             Log-Info "MLaaS CLI unblocked successfully."
         } 
 
+        # Get the current PATH environment variable
+        $CURRENT_PATH = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine)
+
+        # Check if the path is already in the PATH variable
+        if ($CURRENT_PATH -notlike "*$MLAAS_PATH*") {
+            # Add the new path to the PATH variable
+            $NEW_PATH = "$currentPath;$MLAAS_PATH"
+            [System.Environment]::SetEnvironmentVariable("Path", $NEW_PATH, [System.EnvironmentVariableTarget]::Machine)
+            Log-Info "CLI path added to PATH environment variable."
+        } else {
+            Log-Info "CLI path is already in the PATH environment variable."
+        }
+
         Log-Info "The CLI is installed at: $MLAAS_PATH"    
     }   
 }
@@ -208,7 +221,7 @@ if (-not (Get-Command mlaas -ErrorAction SilentlyContinue)) {
     Install-Tool
 } else {
     $MLAAS_VERSION = & mlaas --version
-    if ($PACKAGE_VERSION -eq $MLAAS_VERSION) {
+    if ($PACKAGE_VERSION -eq $MLAAS_VERSION $VERSION -replace 'mlaas, version ', '') {
         Log-Info "The v$PACKAGE_VERSION of the MLaaS CLI is already installed."
         Show-MlaasHelp
     } else {
