@@ -150,10 +150,35 @@ function Install-Tool {
         Write-Host
         Log-Info "MLaaS CLI installed successfully."
         Write-Host
+        Unblock-Cli 
         Show-MlaasHelp
     } else {
         Log-Error "MLaaS CLI could not be installed. See log messages for more info."
     }
+}
+
+function Unblock-Cli {
+    $pipxList = & pipx list  
+    $IS_MLAAS_INSTALLED = $pipxList -match "package $cliName"
+    if ($IS_MLAAS_INSTALLED) {     
+        $regex = [regex]::new('(?<=\$PATH at ).*?(?= manual)')
+        $match = $regex.Match($pipxList)
+        if ($match.Success) {
+            $BINARY_PATH = $match.Value
+        } else {
+            Log-Error "No binary path was found."
+        }
+
+        $MLAAS_PATH = $BINARY_PATH + "\mlaas.exe"
+
+        # Remove MLaaS CLI from the Zone.Identifier ADS
+        if (Test-Path -Path "$MLAAS_PATH:Zone.Identifier") {
+            Remove-Item -Path "$MLAAS_PATH:Zone.Identifier"
+            Log-Info "MLaaS CLI unblocked successfully."
+        } 
+
+        Log-Info "The CLI is installed at: $MLAAS_PATH"    
+    }   
 }
 
 #########################################################################################
