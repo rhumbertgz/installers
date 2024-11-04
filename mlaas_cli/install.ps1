@@ -27,68 +27,84 @@ function Log-Warn {
 
 function Verify-ScoopInstallation{
     if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) {
-        Log-Info "Scoop is not installed. Installing Scoop..."
-        # Download and install Scoop
         Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
         if ($?) {
-            Log-Info "Scoop installed successfully."
             Verify-GitInstallation
         } else {
             Log-Error "Scoop could not be installed. See log messages for more info."
             exit 1
         }
         
-    } else {
-        $SCOOP_VERSION = & scoop --version
-        Log-Info "Using found scoop version: $SCOOP_VERSION"
     }
 }
 
 function Verify-GitInstallation {
     if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
-        Log-Info "Git is not installed. Installing Git..."
         & scoop install git
-        if ($?) {
-            Log-Info "Git installed successfully."
-        } else {
+        if (-not $?) {
             Log-Error "Git could not be installed but it is needed by Scoop. See log messages for more info."
             exit 1
         }
-    } else {
-        $GIT_VERSION = & scoop --version
-        Log-Info "Using found git version: $GIT_VERSION"
-    }
+    } 
 }
 
 function Verify-PipxInstallation{
     if (-not (Get-Command pipx -ErrorAction SilentlyContinue)) {
         Verify-ScoopInstallation
-        Log-Info "pipx is not installed. Installing pipx..."
-        & scoop install pipx
-        if ($?) {
-            Log-Info "pipx installed successfully."
-            Verify-GitInstallation
-        } else {
-            Log-Error "pipx could not be installed. See log messages for more info."
+        Log-Info "pipx is not installed, but it is required to install the MLaaS CLI."
+        $RESPONSE = Read-Host "Do you want to install pipx? (Yes/No)"
+
+        if ($RESPONSE -eg "Yes" -or $RESPONSE -eq 'Y') {
+            Log-Info "Installing pipx..."
+            & scoop install pipx
+            if ($?) {
+                Log-Info "pipx installed successfully."
+                Verify-GitInstallation
+            } else {
+                Log-Error "pipx could not be installed. See log messages for more info."
+                exit 1
+            }
+            & pipx ensurepath
+
+        }   elseif ($RESPONSE -eq "No" -or $RESPONSE -eq 'N'){
+            Log-Info "Aborting MLaaS CLI installation."
             exit 1
-        }
-        & pipx ensurepath
-    } else {
-        $PIPX_VERSION = & pipx --version
-        Log-Info "Using found pipx version: $PIPX_VERSION"
-    }
+
+        } else {
+            Log-Error "Invalid response, please try again."
+            exit 1
+        }  
+    } 
 }
 
 function Install-Python {
-    Verify-ScoopInstallation
-    Write-Output "Python is not installed or an older version was found. Installing Python ..."
     try {
-        & scoop install python
+        $OPTIONS = &("3.11.0". "3.12.0". "3.13.0", "latest")
+
+        for （$i = 0; $i -lt $OPTIONS.Count; $i++）{
+            Write-Output "$($i + 1). $($OPTIONS [$i])"
+        }
+
+        $SELECTION = Read-Host "Please select an option (1-$($OPTIONS.Count))"
+        Verify-ScoopInstallation
+
+        if ($SELECTION -gt 0 -and $SELECTION -le $OPTIONS.Count-1) {
+            $VERSION = $OPTIONS[$SELECTION - 1]
+            $COMMAND = "scoop install python@$VERSION"
+            Invoke-Expression $COMMAND
+        } elseif ($SELECTION -eq 4) {
+            & scoop install python
+        } else {
+            Log-Error "Invalid response, please try again."
+            exit 1
+        }
+
         $VERSION = python --version 2>&1
         Log-Info "$VERSION installed successfully."
         return $VERSION -replace 'Python ', ''
     } catch {
         Log-Error "Python could not be installed."
+        Write-Host $_
         exit 1
     }    
 }
@@ -99,9 +115,11 @@ function Get-PythonVersion {
         if ($VERSION -like "*Python 3*") {
             return $VERSION -replace 'Python ', ''
         } else {
+            Log-Error "Python 3 is not installed."
             return Install-Python 
         }
     } catch {
+        Log-Error "Python 3 is not installed."
         return Install-Python
     }
 }
@@ -110,12 +128,9 @@ function Verify-PythonInstallation {
     $PYTHON_VERSION = Get-PythonVersion
     $PYTHON_MAJOR, $PYTHON_MINOR, $PYTHON_PATCH = $PYTHON_VERSION -split '\.'
 
-
     if ([int]$PYTHON_MAJOR -lt 3 -or ([int]$PYTHON_MAJOR -eq 3 -and [int]$PYTHON_MINOR -lt 9)) {
-        Log-Info "Python 3.9 or newer is required. Current version: $PYTHON_VERSION"
+        Log-Info "Python 3.11 or newer is required. Current version: $PYTHON_VERSION"
         Install-Python
-    }else {
-        Log-Info "Using found Python version: $PYTHON_VERSION"
     }
 }
 
@@ -125,6 +140,8 @@ function Show-MlaasHelp {
 }
 
 function Install-Tool {        
+    Log-Info "Installing MLaaS CLI v$PACKAGE_VERSION ..."
+
     if (Test-Path -Path $DOWNLOADS_PATH) {
         Remove-Item -Path $DOWNLOADS_PATH -Recurse -Force
     } else {
@@ -132,8 +149,6 @@ function Install-Tool {
     }
 
     $PACKAGE_URL = "https://gitlabe2.ext.net.nokia.com/api/v4/projects/96502/packages/generic/mlaas-cli/${PACKAGE_VERSION}/mlaas_cli-${PACKAGE_VERSION}.tar.gz"
-    Log-Info "Downloading package: $PACKAGE_URL"
-
     $OUTPUT_PATH = "${DOWNLOADS_PATH}/mlaas_cli-${PACKAGE_VERSION}.tar.gz"
     try {
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -143,8 +158,6 @@ function Install-Tool {
         Log-Error "Failed to download file: $_"
         exit 1
     }
-
-    Log-Info "Installing MLaaS CLI v$PACKAGE_VERSION ..."
     
     & pipx install $OUTPUT_PATH --pip-args="--default-timeout=1000"
     #& pipx install $TOOL_NAME --index-url=https://_token_:$USER_TOKEN@gitlabe2.ext.net.nokia.com/api/v4/projects/96468/packages/pypi/simple
