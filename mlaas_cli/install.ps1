@@ -158,14 +158,13 @@ function Install-Tool {
 
 #########################################################################################
 Log-Info "Environment Variable USER_TOKEN: $env:USER_TOKEN"
-if ($env:USER_TOKEN) {
+if ([string]::IsNullOrEmpty($env:USER_TOKEN)) {
     Log-Error "env:USER_TOKEN was not provided."
     exit 1
 }
 
+$PACKAGE_VERSION = "1.0.0" 
 if ($env:PACKAGE_VERSION) {
-    $PACKAGE_VERSION = "1.0.0" 
-} else {
     $PACKAGE_VERSION = $env:PACKAGE_VERSION
 }
 
