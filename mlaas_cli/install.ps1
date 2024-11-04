@@ -175,18 +175,18 @@ function Unblock-Cli {
             Log-Info "MLaaS CLI unblocked successfully."
         } 
 
-        # Get the current PATH environment variable
-        $CURRENT_PATH = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine)
+        # # Get the current PATH environment variable
+        # $CURRENT_PATH = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine)
 
-        # Check if the path is already in the PATH variable
-        if ($CURRENT_PATH -notlike "*$MLAAS_PATH*") {
-            # Add the new path to the PATH variable
-            $NEW_PATH = "$currentPath;$MLAAS_PATH"
-            [System.Environment]::SetEnvironmentVariable("Path", $NEW_PATH, [System.EnvironmentVariableTarget]::Machine)
-            Log-Info "CLI path added to PATH environment variable."
-        } else {
-            Log-Info "CLI path is already in the PATH environment variable."
-        }
+        # # Check if the path is already in the PATH variable
+        # if ($CURRENT_PATH -notlike "*$MLAAS_PATH*") {
+        #     # Add the new path to the PATH variable
+        #     $NEW_PATH = "$currentPath;$MLAAS_PATH"
+        #     [System.Environment]::SetEnvironmentVariable("Path", $NEW_PATH, [System.EnvironmentVariableTarget]::Machine)
+        #     Log-Info "CLI path added to PATH environment variable."
+        # } else {
+        #     Log-Info "CLI path is already in the PATH environment variable."
+        # }
 
         Log-Info "The CLI is installed at: $MLAAS_PATH"    
     }   
