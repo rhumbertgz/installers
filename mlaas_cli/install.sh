@@ -25,8 +25,8 @@ fi
 PYTHON_MAJOR=$(echo $PYTHON_VERSION | cut -d' ' -f2 | cut -d'.' -f1)
 PYTHON_MINOR=$(echo $PYTHON_VERSION | cut -d' ' -f2 | cut -d'.' -f2)
 
-if [[ $PYTHON_MAJOR -lt 3 ]] || { [[ $PYTHON_MAJOR -eq 3 ]] && [[ $PYTHON_MINOR -lt 9 ]]; }; then
-    echo "Python 3.9 or newer is required. Current version: $PYTHON_VERSION"
+if [[ $PYTHON_MAJOR -lt 3 ]] || { [[ $PYTHON_MAJOR -eq 3 ]] && [[ $PYTHON_MINOR -lt 11 ]]; }; then
+    echo "Python 3.11 or newer is required. Current version: $PYTHON_VERSION"
     exit 1
 fi
 
@@ -39,7 +39,7 @@ if ! command -v pipx &> /dev/null; then
 fi
 
 # Set default value for PACKAGE_VERSION if not provided
-PACKAGE_VERSION=${2:-1.0.0}
+PACKAGE_VERSION=${2:-1.0.1}
 TOOL_NAME="mlaas-cli"
 
 # Check if the mlaas-cli is installed

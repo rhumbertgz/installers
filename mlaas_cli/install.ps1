@@ -211,7 +211,7 @@ if ([string]::IsNullOrEmpty($env:USER_TOKEN)) {
     exit 1
 }
 
-$PACKAGE_VERSION = "1.0.0" 
+$PACKAGE_VERSION = "1.0.1" 
 if ($env:PACKAGE_VERSION) {
     $PACKAGE_VERSION = $env:PACKAGE_VERSION
 }
