@@ -54,7 +54,7 @@ function Verify-PipxInstallation{
         Log-Info "pipx is not installed, but it is required to install the MLaaS CLI."
         $RESPONSE = Read-Host "Do you want to install pipx? (Yes/No)"
 
-        if ($RESPONSE -eq "Yes" -or $RESPONSE -eq 'Y') {
+        if ($RESPONSE -eq "Yes" -or $RESPONSE -eq "Y") {
             Log-Info "Installing pipx..."
             & scoop install pipx
             if ($?) {
@@ -66,7 +66,7 @@ function Verify-PipxInstallation{
             }
             & pipx ensurepath
 
-        }   elseif ($RESPONSE -eq "No" -or $RESPONSE -eq 'N'){
+        }   elseif ($RESPONSE -eq "No" -or $RESPONSE -eq "N"){
             Log-Info "Aborting MLaaS CLI installation."
             exit 1
 
@@ -113,7 +113,7 @@ function Get-PythonVersion {
     try {
         $VERSION = python --version 2>&1
         if ($VERSION -like "*Python 3*") {
-            return $VERSION -replace 'Python ', ''
+            return $VERSION -replace "Python ", ""
         } else {
             Log-Error "Python 3 is not installed."
             return Install-Python 
