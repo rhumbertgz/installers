@@ -54,7 +54,7 @@ function Verify-PipxInstallation{
         Log-Info "pipx is not installed, but it is required to install the MLaaS CLI."
         $RESPONSE = Read-Host "Do you want to install pipx? (Yes/No)"
 
-        if ($RESPONSE -eg "Yes" -or $RESPONSE -eq 'Y') {
+        if ($RESPONSE -eq "Yes" -or $RESPONSE -eq 'Y') {
             Log-Info "Installing pipx..."
             & scoop install pipx
             if ($?) {
