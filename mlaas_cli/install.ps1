@@ -198,7 +198,7 @@ function Unblock-Cli {
 
         # Check if the BINARY_PATH is already in the PATH variable
         if ($CURRENT_PATH -notlike "*$BINARY_PATH*") {
-            Log-Warn "The binary path: `$BINARY_PATH` is not part of global PATH environment variable."
+            Log-Warn "The binary path: $BINARY_PATH is not part of global PATH environment variable."
         } 
 
         Log-Info "The CLI is installed at: $MLAAS_PATH"    
