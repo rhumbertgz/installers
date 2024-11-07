@@ -103,9 +103,9 @@ function Install-Python {
             exit 1
         }
 
-        $VERSION = python --version 2>&1
-        Log-Info "$VERSION installed successfully."
-        return $VERSION -replace "Python ", ""
+        $INSTALLED_VERSION = & python --version 2>&1
+        Log-Info "$INSTALLED_VERSION installed successfully."
+        return $INSTALLED_VERSION -replace "Python ", ""
     } catch {
         Log-Error "Python could not be installed."
         Write-Host $_
@@ -115,7 +115,7 @@ function Install-Python {
 
 function Get-PythonVersion {
     try {
-        $VERSION = python --version 2>&1
+        $VERSION = & python --version 2>&1
         if ($VERSION -like "*Python 3*") {
             return $VERSION -replace "Python ", ""
         } else {
