@@ -83,7 +83,7 @@ function Install-Python {
         $OPTIONS = @("3.11.0", "3.12.0", "3.13.0", "latest")
         Write-Host "versions: $OPTIONS"
         for ($i = 0; $i -lt $OPTIONS.Count; $i++){
-            Write-Output "$($i + 1). $($OPTIONS[$i])"
+            Write-Host "$($i + 1). $($OPTIONS[$i])"
         }
 
         $SELECTION = Read-Host "Please select an option (1-$($OPTIONS.Count))"
