@@ -81,7 +81,6 @@ function Verify-PipxInstallation{
 function Install-Python {
     try {
         $OPTIONS = @("3.11.0", "3.12.0", "3.13.0", "latest")
-        Write-Host "versions: $OPTIONS"
         for ($i = 0; $i -lt $OPTIONS.Count; $i++){
             Write-Host "$($i + 1). $($OPTIONS[$i])"
         }
