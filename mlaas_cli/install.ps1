@@ -30,6 +30,7 @@ function Verify-ScoopInstallation{
     if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) {
         Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
         if ($?) {
+            & scoop install refreshenv
             Verify-GitInstallation
         } else {
             Log-Error "Scoop could not be installed, but it is needed to install Python. See log messages for more info."
@@ -48,6 +49,7 @@ function Verify-GitInstallation {
         }
     } 
 }
+
 
 function Verify-PipxInstallation{
     if (-not (Get-Command pipx -ErrorAction SilentlyContinue)) {
@@ -80,7 +82,7 @@ function Verify-PipxInstallation{
 
 function Install-Python {
     try {
-        $OPTIONS = @("3.11.0", "3.12.0", "3.13.0", "latest")
+        $OPTIONS = @("3.11", "3.12", "latest")
         for ($i = 0; $i -lt $OPTIONS.Count; $i++){
             Write-Host "$($i + 1). $($OPTIONS[$i])"
         }
@@ -89,10 +91,12 @@ function Install-Python {
         Verify-ScoopInstallation
 
         if ($SELECTION -gt 0 -and $SELECTION -le $OPTIONS.Count-1) {
-            $VERSION = $OPTIONS[$SELECTION - 1]
-            $COMMAND = "scoop install python@$VERSION"
+            $VERSION = $OPTIONS[$SELECTION - 1] -replace "\.", ""
+            $COMMAND = "scoop install python$VERSION"
+            Log-Info "Installing Python $VERSION..."
             Invoke-Expression $COMMAND
-        } elseif ($SELECTION -eq 4) {
+        } elseif ($SELECTION -eq 3) {
+            Log-Info "Installing latest Python version ..."
             & scoop install python
         } else {
             Log-Error "Invalid response, please try again."
@@ -135,8 +139,17 @@ function Verify-PythonInstallation {
 }
 
 function Show-MlaasHelp {
-    Write-Host
-    & mlaas --help
+    if (-not (Get-Command RefreshEnv -ErrorAction SilentlyContinue)) {
+        & scoop install refreshenv
+        if (-not $?) {
+            Log-Error "refreshenv could not be installed. Open a new the terminal to reload the user's PATH environment variable."
+            exit 1
+        }
+    } else {
+        RefreshEnv
+        Write-Host
+        & mlaas --help
+    }
 }
 
 function Install-Tool {        
@@ -194,11 +207,11 @@ function Unblock-Cli {
         } 
 
         # Get the current PATH environment variable
-        $CURRENT_PATH = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine)
+        $CURRENT_PATH = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
 
         # Check if the BINARY_PATH is already in the PATH variable
-        if ($CURRENT_PATH -notlike "*$BINARY_PATH*") {
-            Log-Warn "The binary path: $BINARY_PATH is not part of global PATH environment variable."
+        if (-not $CURRENT_PATH.Contains($BINARY_PATH)) {
+            Log-Warn "The binary path: $BINARY_PATH is not part of user's PATH environment variable: $CURRENT_PATH"
         } 
 
         Log-Info "The CLI is installed at: $MLAAS_PATH"    
