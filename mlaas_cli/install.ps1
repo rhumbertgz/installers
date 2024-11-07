@@ -1,4 +1,5 @@
 $DOWNLOADS_PATH = "mlaas-downloads"
+$TOOL_NAME = "mlaas-cli"
 
 function Cleanup {
     if (Test-Path -Path $DOWNLOADS_PATH) {
@@ -31,7 +32,7 @@ function Verify-ScoopInstallation{
         if ($?) {
             Verify-GitInstallation
         } else {
-            Log-Error "Scoop could not be installed. See log messages for more info."
+            Log-Error "Scoop could not be installed, but it is needed to install Python. See log messages for more info."
             exit 1
         }
         
@@ -80,7 +81,7 @@ function Verify-PipxInstallation{
 function Install-Python {
     try {
         $OPTIONS = @("3.11.0", "3.12.0", "3.13.0", "latest")
-
+        Write-Host "versions: $OPTIONS"
         for ($i = 0; $i -lt $OPTIONS.Count; $i++){
             Write-Output "$($i + 1). $($OPTIONS[$i])"
         }
@@ -101,7 +102,7 @@ function Install-Python {
 
         $VERSION = python --version 2>&1
         Log-Info "$VERSION installed successfully."
-        return $VERSION -replace 'Python ', ''
+        return $VERSION -replace "Python ", ""
     } catch {
         Log-Error "Python could not be installed."
         Write-Host $_
@@ -126,7 +127,7 @@ function Get-PythonVersion {
 
 function Verify-PythonInstallation {
     $PYTHON_VERSION = Get-PythonVersion
-    $PYTHON_MAJOR, $PYTHON_MINOR, $PYTHON_PATCH = $PYTHON_VERSION -split '\.'
+    $PYTHON_MAJOR, $PYTHON_MINOR, $PYTHON_PATCH = $PYTHON_VERSION -split "\."
 
     if ([int]$PYTHON_MAJOR -lt 3 -or ([int]$PYTHON_MAJOR -eq 3 -and [int]$PYTHON_MINOR -lt 9)) {
         Log-Info "Python 3.11 or newer is required. Current version: $PYTHON_VERSION"
@@ -175,7 +176,7 @@ function Install-Tool {
 
 function Unblock-Cli {
     $pipxList = & pipx list  
-    $IS_MLAAS_INSTALLED = $pipxList -match "package $cliName"
+    $IS_MLAAS_INSTALLED = $pipxList -match "package $TOOL_NAME"
     if ($IS_MLAAS_INSTALLED) {     
         $regex = [regex]::new('(?<=\$PATH at ).*?(?= manual)')
         $match = $regex.Match($pipxList)
@@ -217,13 +218,11 @@ if ($env:PACKAGE_VERSION) {
 }
 
 $USER_TOKEN = $env:USER_TOKEN
-$TOOL_NAME = "mlaas-cli"
-
-$proxyServer = "http://135.245.192.7:8000"
+$PROXY_SERVER = "http://135.245.192.7:8000"
 
 # Set the proxy for the current session
-$Env:http_proxy = $proxyServer
-$Env:https_proxy = $proxyServer
+$Env:http_proxy = $PROXY_SERVER
+$Env:https_proxy = $PROXY_SERVER
 
 # Verify Python and Pipx are installed
 Verify-PythonInstallation
@@ -234,7 +233,7 @@ if (-not (Get-Command mlaas -ErrorAction SilentlyContinue)) {
     Install-Tool
 } else {
     $OUTPUT = & mlaas --version
-    $MLAAS_VERSION = $OUTPUT -replace 'mlaas, version ', ''
+    $MLAAS_VERSION = $OUTPUT -replace "mlaas, version ", ""
     if ($PACKAGE_VERSION -eq $MLAAS_VERSION) {
         Log-Info "The v$PACKAGE_VERSION of the MLaaS CLI is already installed."
         Show-MlaasHelp
@@ -244,5 +243,4 @@ if (-not (Get-Command mlaas -ErrorAction SilentlyContinue)) {
         Log-Info "Installing CLI v$PACKAGE_VERSION ..."
         Install-Tool      
     }
-}      
-
+}
