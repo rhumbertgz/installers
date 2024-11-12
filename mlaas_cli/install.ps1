@@ -218,7 +218,7 @@ function Unblock-Cli {
 
         # Check if the BINARY_PATH is already in the PATH variable
         if (-not $CURRENT_PATH.Contains($BINARY_PATH)) {
-            Log-Warn "The binary path: $BINARY_PATH is not part of user's PATH environment variable: $CURRENT_PATH"
+            [Environment]::SetEnvironmentVariable("PATH", $CURRENT_PATH + ";$BINARY_PATH", [System.EnvironmentVariableTarget]::User)
         } 
 
         Log-Info "The CLI is installed at: $MLAAS_PATH"    
@@ -226,7 +226,7 @@ function Unblock-Cli {
 }
 
 #########################################################################################
-Log-Info "MLaaS CLI Installation Script v1.0.11"
+Log-Info "MLaaS CLI Installation Script v1.0.12"
 if ([string]::IsNullOrEmpty($env:USER_TOKEN)) {
     Log-Error "env:USER_TOKEN was not found."
     exit 1
