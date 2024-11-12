@@ -139,15 +139,16 @@ function Get-PythonVersion {
 
 function Verify-PythonInstallation {
     $PYTHON_VERSION = Get-PythonVersion
+    Log-Info "Verify-PythonInstallation 1 PYTHON_VERSION: $PYTHON_VERSION"
     $PYTHON_VERSION = @"
     $PYTHON_VERSION
 "@
-
+    Log-Info "Verify-PythonInstallation 2 PYTHON_VERSION: $PYTHON_VERSION"
     if ($PYTHON_VERSION -match "\((.*?)\)") {
             $PYTHON_VERSION = $matches[1]
         }
 
-    Log-Info "Verify-PythonInstallation PYTHON_VERSION: $PYTHON_VERSION"
+    Log-Info "Verify-PythonInstallation 3 PYTHON_VERSION: $PYTHON_VERSION"
     $PYTHON_MAJOR, $PYTHON_MINOR, $PYTHON_PATCH = $PYTHON_VERSION  -split "\."
 
     if ([int]$PYTHON_MAJOR -lt 3 -or ([int]$PYTHON_MAJOR -eq 3 -and [int]$PYTHON_MINOR -lt 11)) {
@@ -237,7 +238,7 @@ function Unblock-Cli {
 }
 
 #########################################################################################
-Log-Info "MLaaS CLI Installation Script v1.0.9s"
+Log-Info "MLaaS CLI Installation Script v1.0.10"
 if ([string]::IsNullOrEmpty($env:USER_TOKEN)) {
     Log-Error "env:USER_TOKEN was not found."
     exit 1
