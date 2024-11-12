@@ -139,7 +139,9 @@ function Get-PythonVersion {
 
 function Verify-PythonInstallation {
     $PYTHON_VERSION = Get -PythonVersion
-    $PYTHON_VERSION = @"$PYTHON_VERSION"@
+    $PYTHON_VERSION = @"
+    $PYTHON_VERSION
+"@
 
     if ($PYTHON_VERSION -match "\((.*?)\)") {
             $PYTHON_VERSION = $matches[1]
@@ -235,7 +237,7 @@ function Unblock-Cli {
 }
 
 #########################################################################################
-Log-Info "MLaaS CLI Installation Script v1.0.8"
+Log-Info "MLaaS CLI Installation Script v1.0.9s"
 if ([string]::IsNullOrEmpty($env:USER_TOKEN)) {
     Log-Error "env:USER_TOKEN was not found."
     exit 1
