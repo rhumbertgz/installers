@@ -3,7 +3,7 @@ $TOOL_NAME = "mlaas-cli"
 
 function Cleanup {
     if (Test-Path -Path $DOWNLOADS_PATH) {
-        Remove-Item -Path $DOWNLOADS_PATH -Recurse -Force
+        # Remove-Item -Path $DOWNLOADS_PATH -Recurse -Force
     }
 }
 
@@ -58,10 +58,8 @@ function Verify-PipxInstallation{
         $RESPONSE = Read-Host "Do you want to install pipx? (Yes/No)"
 
         if ($RESPONSE -eq "Yes" -or $RESPONSE -eq "Y") {
-            Log-Info "Installing pipx..."
             & scoop install pipx
             if ($?) {
-                Log-Info "pipx installed successfully."
                 Verify-GitInstallation
             } else {
                 Log-Error "pipx could not be installed. See log messages for more info."
@@ -70,7 +68,7 @@ function Verify-PipxInstallation{
             & pipx ensurepath
 
         }   elseif ($RESPONSE -eq "No" -or $RESPONSE -eq "N"){
-            Log-Info "Aborting MLaaS CLI installation."
+            Log-Error "Aborting MLaaS CLI installation."
             exit 1
 
         } else {
@@ -92,10 +90,8 @@ function Install-Python {
 
         if ($SELECTION -gt 0 -and $SELECTION -le $OPTIONS.Count-1) {
             $SELECTED_VERSION = $OPTIONS[$SELECTION - 1]
-            Log-Info "Install-Python  Python SELECTED_VERSION: $SELECTED_VERSION..."
             $VERSION = $SELECTED_VERSION -replace "\.", ""
             $COMMAND = "scoop install python$VERSION"
-            Log-Info "Install-Python  Python VERSION $VERSION..."
             Invoke-Expression $COMMAND
         } elseif ($SELECTION -eq 3) {
             Log-Info "Installing latest Python version ..."
@@ -106,7 +102,6 @@ function Install-Python {
         }
         $OUTPUT = & python --version 2>&1
         $VERSION = $OUTPUT -replace "Python ", ""
-        Log-Info "Install-Python FINAL return $VERSION"
         return $VERSION
         
     } catch {
@@ -119,40 +114,33 @@ function Install-Python {
 function Get-PythonVersion {
     try {
         $OUTPUT = & python --version 2>&1
-        Log-Info "Get-PythonVersion OUTPUT: $OUTPUT"
         if ($OUTPUT -like "*Python 3*") {
             $VERSION = $OUTPUT -replace "Python ", ""
-            Log-Info "Get-PythonVersion 1 return $VERSION"
             return $VERSION
         } else {
             Log-Error "Python 3 is not installed."
-            $VERSION = Install-Python
-            Log-Info "Get-PythonVersion 2 return $VERSION"
-            return $VERSION 
+            return Install-Python
         }
     } catch {
-        $VERSION = Install-Python
-        Log-Info "Get-PythonVersion 2 return $VERSION"
-        return $VERSION 
+        return Install-Python
     }
 }
 
 function Verify-PythonInstallation {
     $PYTHON_VERSION = Get-PythonVersion
-    Log-Info "Verify-PythonInstallation 1 PYTHON_VERSION: $PYTHON_VERSION"
+    # The above is needed because sometimes shim's logs are unexpectable added to return value
     $PYTHON_VERSION = @"
     $PYTHON_VERSION
 "@
-    Log-Info "Verify-PythonInstallation 2 PYTHON_VERSION: $PYTHON_VERSION"
-    if ($PYTHON_VERSION -match "\((.*?)\)") {
-            $PYTHON_VERSION = $matches[1]
-        }
 
-    Log-Info "Verify-PythonInstallation 3 PYTHON_VERSION: $PYTHON_VERSION"
+    if ($PYTHON_VERSION -match "\((.*?)\)") {
+        $PYTHON_VERSION = $matches[1]
+    }
+
     $PYTHON_MAJOR, $PYTHON_MINOR, $PYTHON_PATCH = $PYTHON_VERSION  -split "\."
 
     if ([int]$PYTHON_MAJOR -lt 3 -or ([int]$PYTHON_MAJOR -eq 3 -and [int]$PYTHON_MINOR -lt 11)) {
-        Log-Info "Python 3.11 or newer is required. Current version: $PYTHON_VERSION"
+        Log-Error "Python 3.11 or newer is required. Current version: $PYTHON_VERSION"
         Install-Python
     }
 }
@@ -238,7 +226,7 @@ function Unblock-Cli {
 }
 
 #########################################################################################
-Log-Info "MLaaS CLI Installation Script v1.0.10"
+Log-Info "MLaaS CLI Installation Script v1.0.11"
 if ([string]::IsNullOrEmpty($env:USER_TOKEN)) {
     Log-Error "env:USER_TOKEN was not found."
     exit 1
