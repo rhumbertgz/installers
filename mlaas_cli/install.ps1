@@ -221,7 +221,7 @@ function Unblock-Cli {
             [Environment]::SetEnvironmentVariable("PATH", $CURRENT_PATH + ";$BINARY_PATH", [System.EnvironmentVariableTarget]::User)
         } 
 
-        Log-Info "The CLI is installed at: $MLAAS_PATH"    
+        Log-Info "Open a new terminal, type `mlaas`, and press Enter to use the CLI."    
     }   
 }
 
