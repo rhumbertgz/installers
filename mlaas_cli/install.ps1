@@ -104,9 +104,6 @@ function Install-Python {
             Log-Error "Invalid response, please try again."
             exit 1
         }
-
-        Log-Info "Updating shims..."
-        Start-Sleep -Seconds 8
         $OUTPUT = & python --version 2>&1
         $VERSION = $OUTPUT -replace "Python ", ""
         Log-Info "Install-Python FINAL return $VERSION"
@@ -142,6 +139,10 @@ function Get-PythonVersion {
 
 function Verify-PythonInstallation {
     $PYTHON_VERSION = Get-PythonVersion
+
+    if ($PYTHON_VERSION -match "\((.*?)\)") {
+            $PYTHON_VERSION = $matches[1]
+        }
 
     Log-Info "Verify-PythonInstallation PYTHON_VERSION: $PYTHON_VERSION"
     $PYTHON_MAJOR, $PYTHON_MINOR, $PYTHON_PATCH = $PYTHON_VERSION  -split "\."
@@ -233,7 +234,7 @@ function Unblock-Cli {
 }
 
 #########################################################################################
-Log-Info "MLaaS CLI Installation Script v1.0.7"
+Log-Info "MLaaS CLI Installation Script v1.0.8"
 if ([string]::IsNullOrEmpty($env:USER_TOKEN)) {
     Log-Error "env:USER_TOKEN was not found."
     exit 1
