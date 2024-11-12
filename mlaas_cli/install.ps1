@@ -104,12 +104,6 @@ function Install-Python {
             Log-Error "Invalid response, please try again."
             exit 1
         }
-
-        $OUTPUT = & python --version 2>&1
-        Log-Info "Install-Python OUTPUT: $OUTPUT"
-        $INSTALLED_VERSION = $OUTPUT -replace "Python ", "" -split "\."
-        Log-Info "Install-Python $INSTALLED_VERSION installed successfully."
-        return $INSTALLED_VERSION
     } catch {
         Log-Error "Python could not be installed."
         Write-Host $_
@@ -122,17 +116,21 @@ function Get-PythonVersion {
         $OUTPUT = & python --version 2>&1
         Log-Info "Get-PythonVersion OUTPUT: $OUTPUT"
         if ($OUTPUT -like "*Python 3*") {
-            $VERSION = $OUTPUT -replace "Python", "" -split "\."
+            $VERSION = $OUTPUT -replace "Python ", "" -split "\."
             Log-Info "Get-PythonVersion return $VERSION"
             return $VERSION
         } else {
             Log-Error "Python 3 is not installed."
-            $VERSION = Install-Python
+            Install-Python
+            $OUTPUT = & python --version 2>&1
+            $VERSION = $OUTPUT -replace "Python ", "" -split "\."
             Log-Info "Get-PythonVersion return $VERSION"
             return $VERSION 
         }
     } catch {
-        $VERSION = Install-Python
+        Install-Python
+        $OUTPUT = & python --version 2>&1
+        $VERSION = $OUTPUT -replace "Python ", "" -split "\."
         Log-Info "Get-PythonVersion return $VERSION"
         return $VERSION 
     }
@@ -231,7 +229,7 @@ function Unblock-Cli {
 }
 
 #########################################################################################
-Log-Info "MLaaS CLI Installation Script v1.0.3"
+Log-Info "MLaaS CLI Installation Script v1.0.4"
 if ([string]::IsNullOrEmpty($env:USER_TOKEN)) {
     Log-Error "env:USER_TOKEN was not found."
     exit 1
