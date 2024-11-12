@@ -3,7 +3,7 @@ $TOOL_NAME = "mlaas-cli"
 
 function Cleanup {
     if (Test-Path -Path $DOWNLOADS_PATH) {
-        # Remove-Item -Path $DOWNLOADS_PATH -Recurse -Force
+        Remove-Item -Path $DOWNLOADS_PATH -Recurse -Force
     }
 }
 
@@ -54,7 +54,7 @@ function Verify-GitInstallation {
 function Verify-PipxInstallation{
     if (-not (Get-Command pipx -ErrorAction SilentlyContinue)) {
         Verify-ScoopInstallation
-        Log-Info "pipx is not installed, but it is required to install the MLaaS CLI."
+        Log-Warn "pipx is not installed, but it is required to install the MLaaS CLI."
         $RESPONSE = Read-Host "Do you want to install pipx? (Yes/No)"
 
         if ($RESPONSE -eq "Yes" -or $RESPONSE -eq "Y") {
@@ -118,7 +118,7 @@ function Get-PythonVersion {
             $VERSION = $OUTPUT -replace "Python ", ""
             return $VERSION
         } else {
-            Log-Error "Python 3 is not installed."
+            Log-Warn "Python 3 is not installed."
             return Install-Python
         }
     } catch {
@@ -140,7 +140,7 @@ function Verify-PythonInstallation {
     $PYTHON_MAJOR, $PYTHON_MINOR, $PYTHON_PATCH = $PYTHON_VERSION  -split "\."
 
     if ([int]$PYTHON_MAJOR -lt 3 -or ([int]$PYTHON_MAJOR -eq 3 -and [int]$PYTHON_MINOR -lt 11)) {
-        Log-Error "Python 3.11 or newer is required. Current version: $PYTHON_VERSION"
+        Log-Warn "Python 3.11 or newer is required. Current version: $PYTHON_VERSION"
         Install-Python
     }
 }
@@ -249,7 +249,7 @@ Verify-PythonInstallation
 Verify-PipxInstallation
 
 if (-not (Get-Command mlaas -ErrorAction SilentlyContinue)) {
-    Log-Info "MLaaS CLI not installed. Installing CLI v$PACKAGE_VERSION ..."
+    Log-Warn "MLaaS CLI not installed."
     Install-Tool
 } else {
     $OUTPUT = & mlaas --version
