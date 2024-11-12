@@ -127,11 +127,14 @@ function Get-PythonVersion {
             return $VERSION
         } else {
             Log-Error "Python 3 is not installed."
-            return Install-Python 
+            $VERSION = Install-Python
+            Log-Info "Get-PythonVersion return $VERSION"
+            return $VERSION 
         }
     } catch {
-        Log-Error "Python 3 is not installed."
-        return Install-Python
+        $VERSION = Install-Python
+        Log-Info "Get-PythonVersion return $VERSION"
+        return $VERSION 
     }
 }
 
@@ -228,7 +231,7 @@ function Unblock-Cli {
 }
 
 #########################################################################################
-Log-Info "MLaaS CLI Installation Script v1.0.2"
+Log-Info "MLaaS CLI Installation Script v1.0.3"
 if ([string]::IsNullOrEmpty($env:USER_TOKEN)) {
     Log-Error "env:USER_TOKEN was not found."
     exit 1
