@@ -104,6 +104,16 @@ function Install-Python {
             Log-Error "Invalid response, please try again."
             exit 1
         }
+
+        if ($_ -match "\((.*?)\)") {
+            $VERSION = $matches[1]
+             Log-Info "Install-Python returning Python version: $VERSION ..."
+            return $VERSION
+        }else {
+            Log-Error "Python could not be installed."
+            Write-Host $_
+            exit 1
+        }
     } catch {
         Log-Error "Python could not be installed."
         Write-Host $_
@@ -116,21 +126,17 @@ function Get-PythonVersion {
         $OUTPUT = & python --version 2>&1
         Log-Info "Get-PythonVersion OUTPUT: $OUTPUT"
         if ($OUTPUT -like "*Python 3*") {
-            $VERSION = $OUTPUT -replace "Python ", "" -split "\."
+            $VERSION = $OUTPUT -replace "Python ", ""
             Log-Info "Get-PythonVersion return $VERSION"
             return $VERSION
         } else {
             Log-Error "Python 3 is not installed."
-            Install-Python
-            $OUTPUT = & python --version 2>&1
-            $VERSION = $OUTPUT -replace "Python ", "" -split "\."
+            $VERSION = Install-Python
             Log-Info "Get-PythonVersion return $VERSION"
             return $VERSION 
         }
     } catch {
-        Install-Python
-        $OUTPUT = & python --version 2>&1
-        $VERSION = $OUTPUT -replace "Python ", "" -split "\."
+        $VERSION = Install-Python
         Log-Info "Get-PythonVersion return $VERSION"
         return $VERSION 
     }
@@ -140,7 +146,7 @@ function Verify-PythonInstallation {
     $PYTHON_VERSION = Get-PythonVersion
 
     Log-Info "Verify-PythonInstallation PYTHON_VERSION: $PYTHON_VERSION"
-    $PYTHON_MAJOR, $PYTHON_MINOR, $PYTHON_PATCH = $PYTHON_VERSION
+    $PYTHON_MAJOR, $PYTHON_MINOR, $PYTHON_PATCH = $PYTHON_VERSION  -split "\."
 
     if ([int]$PYTHON_MAJOR -lt 3 -or ([int]$PYTHON_MAJOR -eq 3 -and [int]$PYTHON_MINOR -lt 11)) {
         Log-Info "Python 3.11 or newer is required. Current version: $PYTHON_VERSION"
@@ -229,7 +235,7 @@ function Unblock-Cli {
 }
 
 #########################################################################################
-Log-Info "MLaaS CLI Installation Script v1.0.4"
+Log-Info "MLaaS CLI Installation Script v1.0.5"
 if ([string]::IsNullOrEmpty($env:USER_TOKEN)) {
     Log-Error "env:USER_TOKEN was not found."
     exit 1
