@@ -105,18 +105,13 @@ function Install-Python {
             exit 1
         }
 
-        $OUTPUT = $_
-        Log-Info "Install-Python after installing: $OUTPUT ..."
-
-        if ($OUTPUT -match "\((.*?)\)") {
-            $VERSION = $matches[1]
-             Log-Info "Install-Python returning Python version: $VERSION ..."
-            return $VERSION
-        }else {
-            Log-Error "Python could not be installed."
-            Write-Host $_
-            exit 1
-        }
+        Log-Info "Updating shims..."
+        Start-Sleep -Seconds 3
+        $OUTPUT = & python --version 2>&1
+        $VERSION = $OUTPUT -replace "Python ", ""
+        Log-Info "Install-Python FINAL return $VERSION"
+        return $VERSION
+        
     } catch {
         Log-Error "Python could not be installed."
         Write-Host $_
@@ -238,7 +233,7 @@ function Unblock-Cli {
 }
 
 #########################################################################################
-Log-Info "MLaaS CLI Installation Script v1.0.5"
+Log-Info "MLaaS CLI Installation Script v1.0.6"
 if ([string]::IsNullOrEmpty($env:USER_TOKEN)) {
     Log-Error "env:USER_TOKEN was not found."
     exit 1
