@@ -138,7 +138,7 @@ function Get-PythonVersion {
 }
 
 function Verify-PythonInstallation {
-    $PYTHON_VERSION = Get -PythonVersion
+    $PYTHON_VERSION = Get-PythonVersion
     $PYTHON_VERSION = @"
     $PYTHON_VERSION
 "@
