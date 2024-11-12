@@ -13,17 +13,17 @@ Register-EngineEvent PowerShell.Exiting -Action $cleanupAction
 
 function Log-Info {
     param($Message)
-    Write-Host "[info] $Message"
+    Write-Host $Message
 }
 
 function Log-Error {
     param($Message)
-    Write-Host "[error] $Message" -ForegroundColor Red
+    Write-Host $Message -ForegroundColor Red
 }
 
 function Log-Warn {
     param($Message)
-    Write-Host "[warn] $Message" -ForegroundColor Yellow
+    Write-Host $Message -ForegroundColor Yellow
 }
 
 function Verify-ScoopInstallation{
@@ -106,7 +106,7 @@ function Install-Python {
         }
 
         Log-Info "Updating shims..."
-        Start-Sleep -Seconds 3
+        Start-Sleep -Seconds 8
         $OUTPUT = & python --version 2>&1
         $VERSION = $OUTPUT -replace "Python ", ""
         Log-Info "Install-Python FINAL return $VERSION"
@@ -233,7 +233,7 @@ function Unblock-Cli {
 }
 
 #########################################################################################
-Log-Info "MLaaS CLI Installation Script v1.0.6"
+Log-Info "MLaaS CLI Installation Script v1.0.7"
 if ([string]::IsNullOrEmpty($env:USER_TOKEN)) {
     Log-Error "env:USER_TOKEN was not found."
     exit 1
