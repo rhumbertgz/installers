@@ -105,7 +105,10 @@ function Install-Python {
             exit 1
         }
 
-        if ($_ -match "\((.*?)\)") {
+        $OUTPUT = $_
+        Log-Info "Install-Python after installing: $OUTPUT ..."
+
+        if ($OUTPUT -match "\((.*?)\)") {
             $VERSION = $matches[1]
              Log-Info "Install-Python returning Python version: $VERSION ..."
             return $VERSION
@@ -127,17 +130,17 @@ function Get-PythonVersion {
         Log-Info "Get-PythonVersion OUTPUT: $OUTPUT"
         if ($OUTPUT -like "*Python 3*") {
             $VERSION = $OUTPUT -replace "Python ", ""
-            Log-Info "Get-PythonVersion return $VERSION"
+            Log-Info "Get-PythonVersion 1 return $VERSION"
             return $VERSION
         } else {
             Log-Error "Python 3 is not installed."
             $VERSION = Install-Python
-            Log-Info "Get-PythonVersion return $VERSION"
+            Log-Info "Get-PythonVersion 2 return $VERSION"
             return $VERSION 
         }
     } catch {
         $VERSION = Install-Python
-        Log-Info "Get-PythonVersion return $VERSION"
+        Log-Info "Get-PythonVersion 2 return $VERSION"
         return $VERSION 
     }
 }
