@@ -107,9 +107,9 @@ function Install-Python {
 
         $OUTPUT = & python --version 2>&1
         Log-Info "Install-Python OUTPUT: $OUTPUT"
-        $VERSION = $OUTPUT -replace "Python ", ""
-        Log-Info "Install-Python $VERSION installed successfully."
-        return $VERSION
+        $INSTALLED_VERSION = $OUTPUT -replace "Python ", "" -split "\."
+        Log-Info "Install-Python $INSTALLED_VERSION installed successfully."
+        return $INSTALLED_VERSION
     } catch {
         Log-Error "Python could not be installed."
         Write-Host $_
@@ -122,9 +122,9 @@ function Get-PythonVersion {
         $OUTPUT = & python --version 2>&1
         Log-Info "Get-PythonVersion OUTPUT: $OUTPUT"
         if ($OUTPUT -like "*Python 3*") {
-            $VERSION = $OUTPUT -replace "Python", ""
+            $VERSION = $OUTPUT -replace "Python", "" -split "\."
             Log-Info "Get-PythonVersion return $VERSION"
-            return $VERSION 
+            return $VERSION
         } else {
             Log-Error "Python 3 is not installed."
             return Install-Python 
@@ -139,7 +139,7 @@ function Verify-PythonInstallation {
     $PYTHON_VERSION = Get-PythonVersion
 
     Log-Info "Verify-PythonInstallation PYTHON_VERSION: $PYTHON_VERSION"
-    $PYTHON_MAJOR, $PYTHON_MINOR, $PYTHON_PATCH = $PYTHON_VERSION -split "\."
+    $PYTHON_MAJOR, $PYTHON_MINOR, $PYTHON_PATCH = $PYTHON_VERSION
 
     if ([int]$PYTHON_MAJOR -lt 3 -or ([int]$PYTHON_MAJOR -eq 3 -and [int]$PYTHON_MINOR -lt 11)) {
         Log-Info "Python 3.11 or newer is required. Current version: $PYTHON_VERSION"
@@ -228,7 +228,7 @@ function Unblock-Cli {
 }
 
 #########################################################################################
-Log-Info "MLaaS CLI Installation Script v1.0.1"
+Log-Info "MLaaS CLI Installation Script v1.0.2"
 if ([string]::IsNullOrEmpty($env:USER_TOKEN)) {
     Log-Error "env:USER_TOKEN was not found."
     exit 1
