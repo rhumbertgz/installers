@@ -180,16 +180,17 @@ function Install-Tool {
     }
     
     & pipx install $OUTPUT_PATH --pip-args="--default-timeout=1000"
+    & pipx ensurepath
     #& pipx install $TOOL_NAME --index-url=https://_token_:$USER_TOKEN@gitlabe2.ext.net.nokia.com/api/v4/projects/96468/packages/pypi/simple
 
-    if ($?) {
+    if ($?) {        
+        Unblock-Cli        
         Write-Host
         Log-Info "MLaaS CLI installed successfully."
         Write-Host
-        Unblock-Cli 
         Show-MlaasHelp
     } else {
-        Log-Error "MLaaS CLI could not be installed. See log messages for more info."
+        Log-Error "MLaaS CLI could not be installed."
     }
 }
 
@@ -218,15 +219,14 @@ function Unblock-Cli {
 
         # Check if the BINARY_PATH is already in the PATH variable
         if (-not $CURRENT_PATH.Contains($BINARY_PATH)) {
+            Log-Info "Adding $BINARY_PATH to the user's PATH environment variable."
             [Environment]::SetEnvironmentVariable("PATH", $CURRENT_PATH + ";$BINARY_PATH", [System.EnvironmentVariableTarget]::User)
         } 
-
-        Log-Info "Open a new terminal, type `mlaas`, and press Enter to use the CLI."    
     }   
 }
 
 #########################################################################################
-Log-Info "MLaaS CLI Installation Script v1.0.12"
+Log-Info "MLaaS CLI Installation Script v1.0.14"
 if ([string]::IsNullOrEmpty($env:USER_TOKEN)) {
     Log-Error "env:USER_TOKEN was not found."
     exit 1
