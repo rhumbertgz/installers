@@ -175,7 +175,7 @@ function Install-Tool {
         Write-Host
         Log-Info "Press any key to close this window..."
         [System.Console]::ReadKey() | Out-Null
-        exit
+        Get-Process cmd | Stop-Process
     } else {
         Log-Error "MLaaS CLI could not be installed."
     }
