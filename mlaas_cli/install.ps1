@@ -30,13 +30,12 @@ function Verify-ScoopInstallation{
     if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) {
         Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
         if ($?) {
-            & scoop install refreshenv
             Verify-GitInstallation
+            & scoop bucket add versions
         } else {
             Log-Error "Scoop could not be installed, but it is needed to install Python. See log messages for more info."
             exit 1
         }
-        
     }
 }
 
@@ -49,7 +48,6 @@ function Verify-GitInstallation {
         }
     } 
 }
-
 
 function Verify-PipxInstallation{
     if (-not (Get-Command pipx -ErrorAction SilentlyContinue)) {
@@ -145,20 +143,6 @@ function Verify-PythonInstallation {
     }
 }
 
-function Show-MlaasHelp {
-    if (-not (Get-Command RefreshEnv -ErrorAction SilentlyContinue)) {
-        & scoop install refreshenv
-        if (-not $?) {
-            Log-Error "refreshenv could not be installed. Open a new the terminal to reload the user's PATH environment variable."
-            exit 1
-        }
-    } else {
-        RefreshEnv
-        Write-Host
-        & mlaas --help
-    }
-}
-
 function Install-Tool {        
     Log-Info "Installing MLaaS CLI v$PACKAGE_VERSION ..."
 
@@ -187,8 +171,11 @@ function Install-Tool {
         Unblock-Cli        
         Write-Host
         Log-Info "MLaaS CLI installed successfully."
+        Log-Info "Open a new terminal and try the CLI by typing 'mlaas' and hit the Enter key."
         Write-Host
-        Show-MlaasHelp
+        Log-Info "Press any key to close this window..."
+        [System.Console]::ReadKey() | Out-Null
+        exit
     } else {
         Log-Error "MLaaS CLI could not be installed."
     }
@@ -226,7 +213,7 @@ function Unblock-Cli {
 }
 
 #########################################################################################
-Log-Info "MLaaS CLI Installation Script v1.0.14"
+Log-Info "MLaaS CLI Installation Script v1.0.15"
 if ([string]::IsNullOrEmpty($env:USER_TOKEN)) {
     Log-Error "env:USER_TOKEN was not found."
     exit 1
@@ -256,7 +243,6 @@ if (-not (Get-Command mlaas -ErrorAction SilentlyContinue)) {
     $MLAAS_VERSION = $OUTPUT -replace "mlaas, version ", ""
     if ($PACKAGE_VERSION -eq $MLAAS_VERSION) {
         Log-Info "The v$PACKAGE_VERSION of the MLaaS CLI is already installed."
-        Show-MlaasHelp
     } else {
         Log-Info "Uninstalling MLaaS CLI v$MLAAS_VERSION ..."
         & pipx uninstall $TOOL_NAME
@@ -264,3 +250,4 @@ if (-not (Get-Command mlaas -ErrorAction SilentlyContinue)) {
         Install-Tool      
     }
 }
+
