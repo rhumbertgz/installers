@@ -180,7 +180,7 @@ function Install-Tool {
     $BASE_PATH = $CURRENT_PYTHON -replace '(.*?apps\\).*', '$1'
     $LATEST_PYTHON_PATH = $BASE_PATH+"python"
     $CURRENT_PYTHON_PATH = $BASE_PATH+$CURRENT_PYTHON_NAME
-    if (-not Test-Path -Path $LATEST_PYTHON_PATH) {
+    if (-not (Test-Path -Path $LATEST_PYTHON_PATH)) {
         Log-Info "Making simbolic link -PATH: $LATEST_PYTHON_PATH -TARGET: $CURRENT_PYTHON_PATH"
         New-Item -ItemType SymbolicLink -Path $LATEST_PYTHON_PATH -Target $CURRENT_PYTHON_PATH
     }
@@ -235,7 +235,7 @@ function Unblock-Cli {
 }
 
 #########################################################################################
-Log-Info "MLaaS CLI Installation Script v1.0.18"
+Log-Info "MLaaS CLI Installation Script v1.0.19"
 if ([string]::IsNullOrEmpty($env:USER_TOKEN)) {
     Log-Error "env:USER_TOKEN was not found."
     exit 1
