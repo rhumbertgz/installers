@@ -90,26 +90,26 @@ function Verify-PipxInstallation{
 
 function Install-Python {
     try {
-        $OPTIONS = @("3.11", "3.12", "latest")
-        for ($i = 0; $i -lt $OPTIONS.Count; $i++){
-            Write-Host "$($i + 1). $($OPTIONS[$i])"
-        }
+        # $OPTIONS = @("3.11", "3.12", "latest")
+        # for ($i = 0; $i -lt $OPTIONS.Count; $i++){
+        #     Write-Host "$($i + 1). $($OPTIONS[$i])"
+        # }
 
-        $SELECTION = Read-Host "Please select an option (1-$($OPTIONS.Count))"
-        Verify-ScoopInstallation
+        # $SELECTION = Read-Host "Please select an option (1-$($OPTIONS.Count))"
+        # Verify-ScoopInstallation
 
-        if ($SELECTION -gt 0 -and $SELECTION -le $OPTIONS.Count-1) {
-            $SELECTED_VERSION = $OPTIONS[$SELECTION - 1]
-            $VERSION = $SELECTED_VERSION -replace "\.", ""
-            $COMMAND = "scoop install python$VERSION"
-            Invoke-Expression $COMMAND
-        } elseif ($SELECTION -eq 3) {
-            Log-Info "Installing latest Python version ..."
-            & scoop install python
-        } else {
-            Log-Error "Invalid response, please try again."
-            exit 1
-        }
+        # if ($SELECTION -gt 0 -and $SELECTION -le $OPTIONS.Count-1) {
+        #     $SELECTED_VERSION = $OPTIONS[$SELECTION - 1]
+        #     $VERSION = $SELECTED_VERSION -replace "\.", ""
+        #     $COMMAND = "scoop install python$VERSION"
+        #     Invoke-Expression $COMMAND
+        # } elseif ($SELECTION -eq 3) {
+        #     Log-Info "Installing latest Python version ..."
+        & scoop install python
+        # } else {
+        #     Log-Error "Invalid response, please try again."
+        #     exit 1
+        # }
         $OUTPUT = & python --version 2>&1
         $VERSION = $OUTPUT -replace "Python ", ""
         return $VERSION
@@ -227,7 +227,7 @@ function Unblock-Cli {
 }
 
 #########################################################################################
-Log-Info "MLaaS CLI Installation Script v1.0.20"
+Log-Info "MLaaS CLI Installation Script v1.0.21"
 if ([string]::IsNullOrEmpty($env:USER_TOKEN)) {
     Log-Error "env:USER_TOKEN was not found."
     exit 1
