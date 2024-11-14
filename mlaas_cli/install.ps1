@@ -175,8 +175,9 @@ function Install-Tool {
         Log-Error "Failed to download file: $_"
         exit 1
     }
-    
-    & pipx install $OUTPUT_PATH --pip-args="--default-timeout=1000"
+    $CURRENT_PYTHON = (Get-Command python).Source
+    Log-Info "Using $CURRENT_PYTHON as default python version for pipx..."
+    & pipx install $OUTPUT_PATH --pip-args="--default-timeout=1000" --python $CURRENT_PYTHON
     & pipx ensurepath
     #& pipx install $TOOL_NAME --index-url=https://_token_:$USER_TOKEN@gitlabe2.ext.net.nokia.com/api/v4/projects/96468/packages/pypi/simple
 
@@ -226,7 +227,7 @@ function Unblock-Cli {
 }
 
 #########################################################################################
-Log-Info "MLaaS CLI Installation Script v1.0.16"
+Log-Info "MLaaS CLI Installation Script v1.0.17"
 if ([string]::IsNullOrEmpty($env:USER_TOKEN)) {
     Log-Error "env:USER_TOKEN was not found."
     exit 1
