@@ -176,7 +176,15 @@ function Install-Tool {
         exit 1
     }
     $CURRENT_PYTHON = (Get-Command python).Source
-    Log-Info "Using $CURRENT_PYTHON as default python version for pipx..."
+    $CURRENT_PYTHON_NAME = $path -replace '.*apps\\(.*?)\\current.*', '$1'
+    $BASE_PATH = $CURRENT_PYTHON -replace '(.*?apps\\).*', '$1'
+    $LATEST_PYTHON_PATH = $BASE_PATH+"python"
+    $CURRENT_PYTHON_PATH = $BASE_PATH+$CURRENT_PYTHON_NAME
+    if (-not Test-Path -Path $LATEST_PYTHON_PATH) {
+        Log-Info "Making simbolic link -PATH: $LATEST_PYTHON_PATH -TARGET: $CURRENT_PYTHON_PATH"
+        New-Item -ItemType SymbolicLink -Path $LATEST_PYTHON_PATH -Target $CURRENT_PYTHON_PATH
+    }
+    
     & pipx install $OUTPUT_PATH --pip-args="--default-timeout=1000" --python $CURRENT_PYTHON
     & pipx ensurepath
     #& pipx install $TOOL_NAME --index-url=https://_token_:$USER_TOKEN@gitlabe2.ext.net.nokia.com/api/v4/projects/96468/packages/pypi/simple
