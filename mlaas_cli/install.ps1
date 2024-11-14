@@ -49,7 +49,19 @@ function Verify-GitInstallation {
     } 
 }
 
+function Verify-RefreshEnvInstallation {
+    if (-not (Get-Command RefreshEnv -ErrorAction SilentlyContinue)) {
+        & scoop install refreshenv
+        if (-not $?) {
+            Log-Error "refreshenv could not be installed. Open a new the terminal to reload the user's PATH environment variable."
+            exit 1
+        }
+    } 
+    RefreshEnv
+}
+
 function Verify-PipxInstallation{
+    Verify-RefreshEnvInstallation
     if (-not (Get-Command pipx -ErrorAction SilentlyContinue)) {
         Verify-ScoopInstallation
         Log-Warn "pipx is not installed, but it is required to install the MLaaS CLI."
@@ -143,7 +155,8 @@ function Verify-PythonInstallation {
     }
 }
 
-function Install-Tool {        
+function Install-Tool {      
+    Verify-RefreshEnvInstallation  
     Log-Info "Installing MLaaS CLI v$PACKAGE_VERSION ..."
 
     if (Test-Path -Path $DOWNLOADS_PATH) {
@@ -213,7 +226,7 @@ function Unblock-Cli {
 }
 
 #########################################################################################
-Log-Info "MLaaS CLI Installation Script v1.0.15"
+Log-Info "MLaaS CLI Installation Script v1.0.16"
 if ([string]::IsNullOrEmpty($env:USER_TOKEN)) {
     Log-Error "env:USER_TOKEN was not found."
     exit 1
